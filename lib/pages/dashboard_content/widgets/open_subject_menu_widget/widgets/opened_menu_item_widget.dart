@@ -7,10 +7,7 @@ import 'package:teaching_app/utils/contants.dart';
 import 'package:teaching_app/widgets/elevated_button.dart';
 import 'package:teaching_app/widgets/filled_arrow_icon_widget.dart';
 import 'package:teaching_app/widgets/text_view.dart';
-import 'package:teaching_app/widgets/text_view.dart';
-import 'package:teaching_app/widgets/text_view.dart';
-import 'package:teaching_app/widgets/text_view.dart';
-import 'package:teaching_app/widgets/text_view.dart';
+
 
 class DashboardOpenedSubjectMenuItemWidget extends StatelessWidget {
   final SubjectData model;

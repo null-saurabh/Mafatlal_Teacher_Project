@@ -36,7 +36,7 @@ class DashboardContinueWatchingWidget extends StatelessWidget {
                 itemCount: _.videos.length,
                 itemBuilder: (BuildContext context, int index) {
                   final video = _.videos[index];
-                  return VideoWidget(
+                  return VideoDashboardThumbnailWidget(
                     video: video,
                   );
                 }, separatorBuilder: (context, index) => const SizedBox(
