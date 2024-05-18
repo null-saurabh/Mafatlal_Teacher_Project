@@ -8,11 +8,15 @@ import 'package:teaching_app/widgets/elevated_button.dart';
 import 'package:teaching_app/widgets/filled_arrow_icon_widget.dart';
 import 'package:teaching_app/widgets/text_view.dart';
 
+import '../../../../../database/datebase_controller.dart';
+
 
 class DashboardOpenedSubjectMenuItemWidget extends StatelessWidget {
-  final SubjectData model;
+  final List<LocalChapter> model;
+  final bool isToDo;
+  final int selectedSubject;
 
-  const DashboardOpenedSubjectMenuItemWidget({super.key, required this.model});
+  const DashboardOpenedSubjectMenuItemWidget({super.key, required this.selectedSubject,required this.model,required this.isToDo});
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +27,11 @@ class DashboardOpenedSubjectMenuItemWidget extends StatelessWidget {
             padding:
                 const EdgeInsets.only(top: 50, bottom: 15, left: 15, right: 15),
             child: ListView.builder(
-              itemCount: model.chapters.length,
+              itemCount: model.length,
               itemBuilder: (context, index) {
-                final chapter = model.chapters[index];
+                // print("in hereee ${model.length}");
+                final chapter = model[index].chapter;
+                final topics = model[index].topics;
                 return Obx(() => Card(
                       elevation: 5,
                       child: Theme(
@@ -47,12 +53,12 @@ class DashboardOpenedSubjectMenuItemWidget extends StatelessWidget {
                                   ? Direction.up
                                   : Direction.down,
                             ),
-                            title: Text(chapter.name),
+                            title: Text(chapter.chapterName ?? ""),
                             children: [
                               Container(
                                 color: ThemeColor
                                     .white, // Set background color for content
-                                child: _buildChapterContent(chapter),
+                                child: _buildChapterContent(topics),
                               ),
                             ],
                           ),
@@ -65,7 +71,7 @@ class DashboardOpenedSubjectMenuItemWidget extends StatelessWidget {
         });
   }
 
-  Widget _buildChapterContent(ChapterData chapter) {
+  Widget _buildChapterContent(List<LocalTopic> localTopic) {
     return Column(
       children: [
         Table(
@@ -134,14 +140,14 @@ class DashboardOpenedSubjectMenuItemWidget extends StatelessWidget {
                 )),
               ],
             ),
-            ...chapter.topics.map((topic) {
+            ...localTopic.map((topic) {
               return TableRow(
                 children: [
                   TableCell(
                       child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(children: [
-                            topic.isCompleted
+                            !isToDo
                                 ? const Icon(
                                     Icons.check_circle_outline,
                                     color: Colors.green,
@@ -157,13 +163,78 @@ class DashboardOpenedSubjectMenuItemWidget extends StatelessWidget {
                                 child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                TextView(topic.topicName,fontsize: 13,),
-                                if (topic.completedDate != null)
-                                  TextView(
-                                    "${topic.completedDate}",
-                                    fontsize: 8,
-                                    textColor: ThemeColor.darkBlue4392,
-                                  )
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    TextView(topic.topic.topicName ?? "",fontsize: 13,),
+                                    Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        IconButton(onPressed: (){
+
+                                          print("outside");
+                                          if(isToDo){
+                                            print("inside");
+
+                                            void addToProgress({required int courseId,required int subjectId,required int chapterId,required int topicId}) async{
+                                              print("in adding : ${courseId} : ${subjectId} : ${chapterId} : ${topicId}");
+
+                                              final DatabaseController myDataController = Get.find();
+
+                                              Map<String, dynamic> data = {
+                                                // 'institute_user_content_access_id': 4, // Don't include this field for auto-increment
+                                                'online_institute_user_content_access_id': null,
+                                                'parent_institute_id': 17,
+                                                'institute_id': 10967,
+                                                'institute_user_id': 2,
+                                                'user_type': 'Employee',
+                                                'institute_course_id': chapterId,
+                                                'institute_course_breakup_id': null,
+                                                'institute_subject_id': subjectId,
+                                                'institute_chapter_id': chapterId,
+                                                'institute_topic_id': topicId,
+                                                'institute_topic_data_id': 6299,
+                                                'last_access_start_time': '12:28:54',
+                                                'last_access_end_time': null,
+                                                'total_access_time': 0,
+                                                'no_of_views': null,
+                                                'is_updated': 0
+                                              };
+
+                                              try {
+                                                int id = await myDataController.insert('tbl_institute_user_content_access_2023_2024', data);
+                                                print("Inserted row id: $id");
+                                              } catch (e) {
+                                                print("Error inserting data: $e");
+                                              }
+                                            }
+
+                                            // final DashboardOpenMenuItemController controller = Get.find();
+                                            addToProgress(courseId: topic.topic.instituteCourseId, subjectId: selectedSubject, chapterId: topic.topic.instituteChapterId, topicId: topic.topic.onlineInstituteTopicId);
+                                          }
+                                          Get.toNamed("/videoScreen",arguments: [
+                                            false,model,topic
+                                          ]);
+
+
+                                        }, icon: Icon(Icons.play_circle_fill_outlined,color: ThemeColor.green,)),
+                                        IconButton(
+                                            onPressed: (){
+                                              Get.toNamed('/contentPlanning');
+                                            },
+                                            icon: Icon(Icons.queue_play_next_outlined,color: ThemeColor.green,)),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                // if (topic.completedDate != null)
+                                //   TextView(
+                                //     "${topic.completedDate}",
+                                //     fontsize: 8,
+                                //     textColor: ThemeColor.darkBlue4392,
+                                //   )
                               ],
                             )),
                           ]))),
@@ -171,25 +242,25 @@ class DashboardOpenedSubjectMenuItemWidget extends StatelessWidget {
                       child: Center(
                     child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: TextView('${topic.mediaCount}/6',fontsize: 13)),
+                        child: TextView('0/${topic.mediaCount}',fontsize: 13)),
                   )),
                   TableCell(
                       child: Center(
                     child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: TextView('${topic.eMaterialCount}/10',fontsize: 13)),
+                        child: TextView('0/${topic.eMaterialCount}',fontsize: 13)),
                   )),
                   TableCell(
                       child: Center(
                     child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: TextView('${topic.questionsCount}/100',fontsize: 13)),
+                        child: TextView('0/100',fontsize: 13)),
                   )),
                   TableCell(
                       child: Center(
                     child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: TextView('${topic.quizCount}',fontsize: 13)),
+                        child: TextView('2',fontsize: 13)),
                   )),
                 ],
               );

@@ -20,9 +20,9 @@ class ContentPlanningScreen extends StatelessWidget {
         builder: (_) {
           return AppScaffold(
               showTopRadius: false,
-              showAppbar: false,
+              showAppbar: true,
               bgColor: ThemeColor.scaffoldBgColor,
-              showLeading: false,
+              showLeading: true,
               body: SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.all(25.0),

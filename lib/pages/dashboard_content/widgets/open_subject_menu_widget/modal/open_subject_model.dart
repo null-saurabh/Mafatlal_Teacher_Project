@@ -1,40 +1,44 @@
 
 
-class SubjectData {
-  final List<ChapterData> chapters;
-
-  SubjectData({
-    required this.chapters,
-  });
-}
 
 
-class ChapterData {
-  final String name;
-  final List<TopicData> topics;
+import 'package:flutter/cupertino.dart';
+import 'package:teaching_app/modals/tbl_institute_topic.dart';
+import 'package:teaching_app/modals/tbl_institute_topic_data.dart';
+import 'package:teaching_app/modals/tbl_intitute_chapter_model.dart';
 
-  ChapterData({
-    required this.name,
+class LocalChapter {
+  final InstituteChapter chapter;
+  final List<LocalTopic> topics;
+
+  LocalChapter({
+    required this.chapter,
     required this.topics,
   });
 }
 
-class TopicData {
-  final String topicName;
-  final int mediaCount;
-  final int eMaterialCount;
-  final int questionsCount;
-  final int quizCount;
-  final bool isCompleted;
-  final String? completedDate;
+class LocalTopic{
+  final InstituteTopic topic;
+  final List<InstituteTopicData> topicData;
 
-  TopicData({
-    required this.topicName,
-    required this.mediaCount,
-    required this.eMaterialCount,
-    required this.questionsCount,
-    required this.quizCount,
-    required this.isCompleted,
-    this.completedDate,
-  });
+  LocalTopic({
+  required this.topic,
+  required this.topicData,
+});
+
+  int get mediaCount {
+    return topicData.where((data) =>
+    data.topicDataType == 'HTML5' ||
+        data.topicDataType == 'MP3' ||
+        data.topicDataType == 'MP4'
+    ).length;
+  }
+
+  int get eMaterialCount {
+    return topicData.where((data) =>
+    data.topicDataType == 'Embedded'
+    ).length;
+  }
+
 }
+

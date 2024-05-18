@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:teaching_app/database/datebase_controller.dart';
 import 'package:teaching_app/pages/add_content_planning/content_planning_screen.dart';
 import 'package:teaching_app/pages/dashboard_content/dashboard_screen.dart';
 import 'package:teaching_app/pages/video_main_screen/video_main_screen.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  sqfliteFfiInit();
+  databaseFactory = databaseFactoryFfi;
+
+  final databaseController = Get.put(DatabaseController());
+  await databaseController.initializeDatabase();
+
   runApp(const MyApp());
 }
 
@@ -23,7 +32,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       initialBinding: BindingsBuilder(() {
-        Get.lazyPut<MyDataController>(() => MyDataController());
+        Get.lazyPut<DatabaseController>(() => DatabaseController());
       }),
       initialRoute: '/',
       getPages: [

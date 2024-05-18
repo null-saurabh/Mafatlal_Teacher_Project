@@ -3,14 +3,19 @@ import 'package:get/get.dart';
 import 'package:teaching_app/app_theme.dart';
 import 'package:teaching_app/widgets/app_rich_text.dart';
 
-class VideoDashboardThumbnailWidget extends StatelessWidget {
-  final Map<String, String> video;
+import '../../open_subject_menu_widget/modal/open_subject_model.dart';
 
-  const VideoDashboardThumbnailWidget({super.key, required this.video,
+class VideoDashboardThumbnailWidget extends StatelessWidget {
+  final Map<String, dynamic> video;
+  // final Map<int,Map<String, List<LocalChapter>>> chapterData;
+
+  const VideoDashboardThumbnailWidget({super.key, required this.video
+    // ,required this.chapterData
   });
 
   @override
   Widget build(BuildContext context) {
+    // print("in thumbnail ${chapterData[34]?["inProgress"]?[0].chapter.chapterName}");
     return SizedBox(
       width: 280, // adjust width as needed
       child: Column(
@@ -20,7 +25,10 @@ class VideoDashboardThumbnailWidget extends StatelessWidget {
           
             child: InkWell(
               onTap: (){
-                Get.toNamed('/videoScreen');
+                Get.toNamed('/videoScreen',
+                  arguments: [true,video]
+                );
+
               },
               child: Card(
                 elevation: 5,
@@ -28,7 +36,7 @@ class VideoDashboardThumbnailWidget extends StatelessWidget {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: NetworkImage(video['image']!), // Replace with your selected image URL
+                      image: NetworkImage('https://getwallpapers.com/wallpaper/full/a/b/4/891455-wallpaper-of-study-2560x1440-for-hd-1080p.jpg'), // Replace with your selected image URL
                       fit: BoxFit.fill,
                     ),
                     borderRadius: BorderRadius.circular(5),

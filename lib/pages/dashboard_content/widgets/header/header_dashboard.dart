@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:teaching_app/app_theme.dart';
+import 'package:teaching_app/modals/tbl_institute_course.dart';
+import 'package:teaching_app/modals/tbl_institute_subject.dart';
 import 'package:teaching_app/pages/dashboard_content/widgets/header/header_dashboard_controller.dart';
 import 'package:teaching_app/utils/ext_utils.dart';
 import 'package:teaching_app/widgets/app_dropDown.dart';
@@ -50,7 +52,7 @@ class DashboardHeaderWidget extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Expanded(
-                                child: ColumnAppRichText(
+                                child: Obx(() => ColumnAppRichText(
                                     title: "Class *",
                                     titleWidget: const Row(
                                       children: [
@@ -62,19 +64,26 @@ class DashboardHeaderWidget extends StatelessWidget {
                                         ),
                                       ],
                                     ),
-                                    child: AppDropDown<String>(
-                                        onChange: (p0) {
+                                    child:  AppDropDown<InstituteCourse>(
+                                        onChange: (p0) async{
                                           _.selectedClass.value = p0;
+                                          if(p0 !=null){
+                                          await _.fetchSubjectsForClass(p0);
+                                          await _.fetchDataForAllSubjects();
+                                          _.fetchContinueData(p0.onlineInstituteCourseId, null);
+                                          }
                                         },
+
+                                        hintText: "Select class",
                                         value: _.selectedClass.value,
                                         items: _.classList.dropDownItem(
-                                            (element) => element),
-                                        height: 40))),
+                                            (element) => element.instituteCourseName),
+                                        height: 40)))),
                             const SizedBox(
                               width: 20,
                             ),
                             Expanded(
-                                child: ColumnAppRichText(
+                                child: Obx(() => ColumnAppRichText(
                                     title: "Subject",
                                     titleWidget: const Row(
                                       children: [
@@ -86,14 +95,18 @@ class DashboardHeaderWidget extends StatelessWidget {
                                         ),
                                       ],
                                     ),
-                                    child: AppDropDown<String>(
+                                    child: AppDropDown<InstituteSubject>(
                                         onChange: (p0) {
                                           _.selectedSubject.value = p0;
+                                          if(p0 !=null){
+                                            _.fetchContinueData(_.selectedClass.value!.onlineInstituteCourseId, p0.onlineInstituteSubjectId);
+                                            // _.fetchData(_.selectedSubject.value!.instituteSubjectId);
+                                          }
                                         },
                                         value: _.selectedSubject.value,
                                         items: _.subjectList.dropDownItem(
-                                            (element) => element),
-                                        height: 40))),
+                                            (element) => element.subjectName!),
+                                        height: 40)))),
                             const SizedBox(
                               width: 20,
                             ),

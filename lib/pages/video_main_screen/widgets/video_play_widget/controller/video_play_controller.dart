@@ -3,7 +3,8 @@ import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayController extends GetxController {
-  late VlcPlayerController vlcPlayerController;
+  late VlcPlayerController? vlcPlayerController;
+  // VlcPlayerController _videoPlayerController;
 
   @override
   void onInit() {
@@ -14,13 +15,13 @@ class VideoPlayController extends GetxController {
 
   @override
   void onClose() {
-    vlcPlayerController.dispose();
+    vlcPlayerController?.dispose();
     super.onClose();
   }
 
         void initializePlayer() {
       vlcPlayerController = VlcPlayerController.network(
-        'hhttps://www.youtube.com/watch?v=xDxhr-zgAhE', // Replace with your video URL
+        'https://www.youtube.com/watch?v=xDxhr-zgAhE', // Replace with your video URL
         hwAcc: HwAcc.full,
         autoPlay: true,
         options: VlcPlayerOptions(),

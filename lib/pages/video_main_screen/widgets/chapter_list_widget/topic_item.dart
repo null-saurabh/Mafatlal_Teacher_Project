@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:teaching_app/app_theme.dart';
 import 'package:teaching_app/pages/dashboard_content/widgets/open_subject_menu_widget/modal/open_subject_model.dart';
@@ -8,10 +9,13 @@ class TopicItemWidget extends StatefulWidget {
     super.key,
     required this.topicIndex,
     required this.topic,
+    required this.isSelected,
+
   });
 
   final int topicIndex;
-  final TopicData topic;
+  final LocalTopic topic;
+  final bool isSelected;
 
   @override
   State<TopicItemWidget> createState() => _TopicItemWidgetState();
@@ -22,6 +26,7 @@ class _TopicItemWidgetState extends State<TopicItemWidget> {
 
   @override
   Widget build(BuildContext context) {
+    // print("inside topic list ids : ${widget.selectedTopicId} ");
     return MouseRegion(
       onEnter: (_) {
         setState(() {
@@ -54,12 +59,14 @@ class _TopicItemWidgetState extends State<TopicItemWidget> {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
-                SizedBox(width: 40),
-                TextView(
-                  "Topic ${widget.topicIndex + 1} -  ${widget.topic.topicName}",
-                  fontweight: FontWeight.bold,
-                  fontsize: 12,
-                  textColor: _isHovered ? ThemeColor.darkBlue4392 : null,
+                const SizedBox(width: 40),
+                Expanded(
+                  child: TextView(
+                    "Topic ${widget.topicIndex + 1} -  ${widget.topic.topic.topicName}",
+                    fontweight: FontWeight.bold,
+                    fontsize: 12,
+                    textColor: _isHovered ? ThemeColor.darkBlue4392 : widget.isSelected ? ThemeColor.darkBlue4392 :null,
+                  ),
                 ),
               ],
             ),
