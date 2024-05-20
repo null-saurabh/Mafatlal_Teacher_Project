@@ -8,14 +8,17 @@ class TopicItemWidget extends StatefulWidget {
   const TopicItemWidget({
     super.key,
     required this.topicIndex,
-    required this.topic,
+    this.topic,
     required this.isSelected,
+    this.label,
+
 
   });
 
   final int topicIndex;
-  final LocalTopic topic;
+  final LocalTopic? topic;
   final bool isSelected;
+  final String? label;
 
   @override
   State<TopicItemWidget> createState() => _TopicItemWidgetState();
@@ -27,18 +30,20 @@ class _TopicItemWidgetState extends State<TopicItemWidget> {
   @override
   Widget build(BuildContext context) {
     // print("inside topic list ids : ${widget.selectedTopicId} ");
-    return MouseRegion(
-      onEnter: (_) {
-        setState(() {
-          _isHovered = true;
-        });
-      },
-      onExit: (_) {
-        setState(() {
-          _isHovered = false;
-        });
-      },
-      child: InkWell(
+    return
+    // MouseRegion(
+    //   onEnter: (_) {
+    //     setState(() {
+    //       _isHovered = true;
+    //     });
+    //   },
+    //   onExit: (_) {
+    //     setState(() {
+    //       _isHovered = false;
+    //     });
+    //   },
+    //   child:
+      InkWell(
         onTap: () {},
         child: Container(
           margin: const EdgeInsets.only(left: 5, right: 5, bottom: 5),
@@ -60,9 +65,18 @@ class _TopicItemWidgetState extends State<TopicItemWidget> {
             child: Row(
               children: [
                 const SizedBox(width: 40),
-                Expanded(
+                widget.label == null
+                ?widget.topic != null ?Expanded(
                   child: TextView(
-                    "Topic ${widget.topicIndex + 1} -  ${widget.topic.topic.topicName}",
+                    "Topic ${widget.topicIndex + 1} -  ${widget.topic!.topic.topicName}",
+                    fontweight: FontWeight.bold,
+                    fontsize: 12,
+                    textColor: _isHovered ? ThemeColor.darkBlue4392 : widget.isSelected ? ThemeColor.darkBlue4392 :null,
+                  )
+                ) :SizedBox()
+                :Expanded(
+                  child: TextView(
+                    "${widget.topicIndex + 1}. ${widget.label}",
                     fontweight: FontWeight.bold,
                     fontsize: 12,
                     textColor: _isHovered ? ThemeColor.darkBlue4392 : widget.isSelected ? ThemeColor.darkBlue4392 :null,
@@ -72,7 +86,7 @@ class _TopicItemWidgetState extends State<TopicItemWidget> {
             ),
           ),
         ),
-      ),
+      // ),
     );
   }
 }

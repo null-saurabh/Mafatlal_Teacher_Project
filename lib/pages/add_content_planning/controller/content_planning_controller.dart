@@ -19,18 +19,23 @@ class ContentPlanningController extends GetxController{
       'level': 'Basic',
       'language': 'English',
       'type': 'Explore',
+      'title' : 'Punishment in School'
     },
     {
       'number': '2',
       'level': 'Advanced',
       'language': 'Hindi',
       'type': 'Concept',
+      'title' : 'In the Woods'
+
     },
     {
       'number': '3',
       'level': 'Intermediate',
       'language': 'English',
       'type': 'Concept',
+      'title' : 'Printing Paper'
+
     },
   ];
 

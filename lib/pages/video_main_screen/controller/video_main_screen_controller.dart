@@ -14,6 +14,10 @@ class VideoMainScreenController extends GetxController{
   var chap = RxList<LocalChapter>().obs;
   var topics = RxList<InstituteTopicData>().obs;
 
+
+  var videotopics = RxList<InstituteTopicData>().obs;
+  var ematerialtopics = RxList<InstituteTopicData>().obs;
+
   var selectedTopic = Rxn<LocalTopic>();
 
   var className = RxnString();
@@ -49,6 +53,7 @@ class VideoMainScreenController extends GetxController{
       chapterName.value = await fetchChapterName(selectedTopic.value!.topic.instituteChapterId);
       topicName.value = selectedTopic.value!.topic.topicName;
       topics.value.assignAll(selectedTopic.value!.topicData);
+      filterTopicData();
     }
     // Now you can use the chapterData as needed
   }
@@ -288,5 +293,19 @@ class VideoMainScreenController extends GetxController{
   }
 
 
+  void filterTopicData() {
+    // Filter video type data
+    var videoData = topics.value.where((topic) => topic.topicDataType == "HTML5" || topic.topicDataType == "MP4").toList();
+    // Filter ematerial type data
+    var ematerialData = topics.value.where((topic) => topic.topicDataType == "e-Material").toList();
+
+
+    videotopics.value.assignAll(videoData);
+    ematerialtopics.value.assignAll(ematerialData);
+    // Do something with the filtered data, e.g., update variables or UI
+    // For example:
+    // videoData.forEach((data) => print("Video data: ${data.topicDataId}"));
+    // ematerialData.forEach((data) => print("eMaterial data: ${data.topicDataId}"));
+  }
 
 }
