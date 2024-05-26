@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:whiteboard/whiteboard.dart';
 import '../../../database/datebase_controller.dart';
 import '../../../modals/tbl_institute_topic.dart';
 import '../../../modals/tbl_institute_topic_data.dart';
@@ -14,9 +16,15 @@ class VideoMainScreenController extends GetxController{
   var chap = RxList<LocalChapter>().obs;
   var topics = RxList<InstituteTopicData>().obs;
 
-
+  var currentTopicData = Rxn<InstituteTopicData>();
   var videotopics = RxList<InstituteTopicData>().obs;
   var ematerialtopics = RxList<InstituteTopicData>().obs;
+  var aiContentTopics = RxList<InstituteTopicData>().obs;
+
+
+  RxBool openWhiteBoard = false.obs;
+  WhiteBoardController whiteBoardController =WhiteBoardController();
+
 
   var selectedTopic = Rxn<LocalTopic>();
 
@@ -24,6 +32,7 @@ class VideoMainScreenController extends GetxController{
   var subjectName = RxnString();
   var chapterName = RxnString();
   var topicName = RxnString();
+
 
   @override
   void onInit() async {
@@ -45,7 +54,7 @@ class VideoMainScreenController extends GetxController{
     }
     else{
 
-      print("in else");
+      // print("in else");
       chap.value.assignAll(args[1]);
       selectedTopic.value = args[2];
       className.value = await fetchClassName(selectedTopic.value!.topic.instituteCourseId);
@@ -55,6 +64,8 @@ class VideoMainScreenController extends GetxController{
       topics.value.assignAll(selectedTopic.value!.topicData);
       filterTopicData();
     }
+
+    currentTopicData.value = topics.value[1];
     // Now you can use the chapterData as needed
   }
 
@@ -293,19 +304,60 @@ class VideoMainScreenController extends GetxController{
   }
 
 
-  void filterTopicData() {
+  void filterTopicData() async{
     // Filter video type data
     var videoData = topics.value.where((topic) => topic.topicDataType == "HTML5" || topic.topicDataType == "MP4").toList();
+    // print("filter video data :${videoData.length} : ${videoData[videoData.length -1].instituteTopicId}");
     // Filter ematerial type data
     var ematerialData = topics.value.where((topic) => topic.topicDataType == "e-Material").toList();
+    var aiContentData = topics.value.where((topic) => topic.topicDataType == "e-Content (AI)").toList();
 
+    try {
+      final List<Map<String, dynamic>> existingSyllabusData = await myDataController.query(
+        'tbl_syllabus_planning_2024_2025',
+        where: 'institute_topic_id = ?',
+        whereArgs: [selectedTopic.value!.topic.onlineInstituteTopicId.toDouble()],
+      );
+      print("fetching syllabus data 1");
 
-    videotopics.value.assignAll(videoData);
-    ematerialtopics.value.assignAll(ematerialData);
+      List<double> existingTopicDataIds = existingSyllabusData
+          .map((entry) => entry['institute_topic_data_id'] as double)
+          .toList();
+
+      print(existingTopicDataIds);
+
+      for (var video in videoData) {
+        if (existingTopicDataIds.contains(video.instituteTopicDataId.toDouble())) {
+          videotopics.value.add(video);
+        }
+      }
+
+      for (var eMaterialData in ematerialData) {
+        if (existingTopicDataIds.contains(eMaterialData.instituteTopicDataId)) {
+          ematerialtopics.value.add(eMaterialData);
+        }
+      }
+    } catch (e) {
+      print('Error fetching existing selections: $e');
+    }
+    // videotopics.value.assignAll(videoData);
+    // ematerialtopics.value.assignAll(ematerialData);
+
     // Do something with the filtered data, e.g., update variables or UI
     // For example:
     // videoData.forEach((data) => print("Video data: ${data.topicDataId}"));
     // ematerialData.forEach((data) => print("eMaterial data: ${data.topicDataId}"));
+  }
+
+
+  RxBool isErasing = false.obs;
+  Rx<Color> selectedColor = Colors.blue.obs;
+
+  void undo(){
+    whiteBoardController.undo();
+  }
+  void redo(){
+    whiteBoardController.redo();
   }
 
 }

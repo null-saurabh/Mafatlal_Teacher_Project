@@ -10,13 +10,16 @@ import 'package:teaching_app/widgets/text_view.dart';
 
 import '../../../../../database/datebase_controller.dart';
 
-
 class DashboardOpenedSubjectMenuItemWidget extends StatelessWidget {
   final List<LocalChapter> model;
   final bool isToDo;
   final int selectedSubject;
 
-  const DashboardOpenedSubjectMenuItemWidget({super.key, required this.selectedSubject,required this.model,required this.isToDo});
+  const DashboardOpenedSubjectMenuItemWidget(
+      {super.key,
+      required this.selectedSubject,
+      required this.model,
+      required this.isToDo});
 
   @override
   Widget build(BuildContext context) {
@@ -78,8 +81,8 @@ class DashboardOpenedSubjectMenuItemWidget extends StatelessWidget {
           columnWidths: {
             0: const FlexColumnWidth(9),
             1: const FlexColumnWidth(3.5),
-            2: const FlexColumnWidth(5),
-            3: const FlexColumnWidth(5),
+            2: const FlexColumnWidth(3.5),
+            3: const FlexColumnWidth(3.5),
             4: const FlexColumnWidth(3.5),
           },
           border: TableBorder.all(color: ThemeColor.greyLight),
@@ -145,7 +148,7 @@ class DashboardOpenedSubjectMenuItemWidget extends StatelessWidget {
                 children: [
                   TableCell(
                       child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(0.0),
                           child: Row(children: [
                             !isToDo
                                 ? const Icon(
@@ -158,45 +161,57 @@ class DashboardOpenedSubjectMenuItemWidget extends StatelessWidget {
                                     color: Colors.grey,
                                     size: 16,
                                   ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                                child: Column(
+                            // const SizedBox(width: 8),
+                            Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Column(
+                                TextView(
+                                  topic.topic.topicName ?? "",
+                                  fontsize: 13,
+                                ),
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    TextView(topic.topic.topicName ?? "",fontsize: 13,),
-                                    Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        IconButton(onPressed: (){
-
+                                    IconButton(
+                                        onPressed: () {
                                           print("outside");
-                                          if(isToDo){
+                                          if (isToDo) {
                                             print("inside");
 
-                                            void addToProgress({required int courseId,required int subjectId,required int chapterId,required int topicId}) async{
-                                              print("in adding : ${courseId} : ${subjectId} : ${chapterId} : ${topicId}");
+                                            void addToProgress(
+                                                {
+                                                  required int courseId,
+                                                required int subjectId,
+                                                required int chapterId,
+                                                required int topicId}) async {
+                                              print(
+                                                  "in adding : ${courseId} : ${subjectId} : ${chapterId} : ${topicId}");
 
-                                              final DatabaseController myDataController = Get.find();
+                                              final DatabaseController
+                                                  myDataController = Get.find();
 
                                               Map<String, dynamic> data = {
                                                 // 'institute_user_content_access_id': 4, // Don't include this field for auto-increment
-                                                'online_institute_user_content_access_id': null,
+                                                'online_institute_user_content_access_id':
+                                                    null,
                                                 'parent_institute_id': 17,
                                                 'institute_id': 10967,
                                                 'institute_user_id': 2,
                                                 'user_type': 'Employee',
-                                                'institute_course_id': chapterId,
-                                                'institute_course_breakup_id': null,
-                                                'institute_subject_id': subjectId,
-                                                'institute_chapter_id': chapterId,
+                                                'institute_course_id':
+                                                    chapterId,
+                                                'institute_course_breakup_id':
+                                                    null,
+                                                'institute_subject_id':
+                                                    subjectId,
+                                                'institute_chapter_id':
+                                                    chapterId,
                                                 'institute_topic_id': topicId,
                                                 'institute_topic_data_id': 6299,
-                                                'last_access_start_time': '12:28:54',
+                                                'last_access_start_time':
+                                                    '12:28:54',
                                                 'last_access_end_time': null,
                                                 'total_access_time': 0,
                                                 'no_of_views': null,
@@ -204,31 +219,156 @@ class DashboardOpenedSubjectMenuItemWidget extends StatelessWidget {
                                               };
 
                                               try {
-                                                int id = await myDataController.insert('tbl_institute_user_content_access_2023_2024', data);
+                                                int id = await myDataController
+                                                    .insert(
+                                                        'tbl_institute_user_content_access_2023_2024',
+                                                        data);
                                                 print("Inserted row id: $id");
                                               } catch (e) {
-                                                print("Error inserting data: $e");
+                                                print(
+                                                    "Error inserting data: $e");
                                               }
                                             }
 
                                             // final DashboardOpenMenuItemController controller = Get.find();
-                                            addToProgress(courseId: topic.topic.instituteCourseId, subjectId: selectedSubject, chapterId: topic.topic.instituteChapterId, topicId: topic.topic.onlineInstituteTopicId);
+                                            addToProgress(
+                                                courseId: topic
+                                                    .topic.instituteCourseId,
+                                                subjectId: selectedSubject,
+                                                chapterId: topic
+                                                    .topic.instituteChapterId,
+                                                topicId: topic.topic
+                                                    .onlineInstituteTopicId);
                                           }
-                                          Get.toNamed("/videoScreen",arguments: [
-                                            false,model,topic
-                                          ]);
-
-
-                                        }, icon: Icon(Icons.play_circle_fill_outlined,color: ThemeColor.green,)),
-                                        IconButton(
-                                            onPressed: (){
-                                              Get.toNamed('/contentPlanning');
-                                            },
-                                            icon: Icon(Icons.queue_play_next_outlined,color: ThemeColor.green,)),
-                                      ],
-                                    ),
+                                          Get.toNamed("/videoScreen",
+                                              arguments: [false, model, topic]);
+                                        },
+                                        icon: Icon(
+                                          Icons.play_circle_fill_outlined,
+                                          color: ThemeColor.green,
+                                          size: 20,
+                                        )),
+                                    IconButton(
+                                        onPressed: () {
+                                          Get.toNamed('/contentPlanning',arguments: [topic]);
+                                        },
+                                        icon: Icon(
+                                          Icons.queue_play_next_outlined,
+                                          color: ThemeColor.green,
+                                          size: 20,
+                                        )),
                                   ],
                                 ),
+                                // Column(
+                                //   crossAxisAlignment: CrossAxisAlignment.start,
+                                //   mainAxisAlignment: MainAxisAlignment.start,
+                                //   children: [
+                                //     TextView(
+                                //       topic.topic.topicName ?? "",
+                                //       fontsize: 13,
+                                //     ),
+                                //     Row(
+                                //       mainAxisSize: MainAxisSize.min,
+                                //       crossAxisAlignment:
+                                //           CrossAxisAlignment.start,
+                                //       mainAxisAlignment:
+                                //           MainAxisAlignment.start,
+                                //
+                                //       children: [
+                                //         IconButton(
+                                //             onPressed: () {
+                                //               print("outside");
+                                //               if (isToDo) {
+                                //                 print("inside");
+                                //
+                                //                 void addToProgress(
+                                //                     {required int courseId,
+                                //                     required int subjectId,
+                                //                     required int chapterId,
+                                //                     required int
+                                //                         topicId}) async {
+                                //                   print(
+                                //                       "in adding : ${courseId} : ${subjectId} : ${chapterId} : ${topicId}");
+                                //
+                                //                   final DatabaseController
+                                //                       myDataController =
+                                //                       Get.find();
+                                //
+                                //                   Map<String, dynamic> data = {
+                                //                     // 'institute_user_content_access_id': 4, // Don't include this field for auto-increment
+                                //                     'online_institute_user_content_access_id':
+                                //                         null,
+                                //                     'parent_institute_id': 17,
+                                //                     'institute_id': 10967,
+                                //                     'institute_user_id': 2,
+                                //                     'user_type': 'Employee',
+                                //                     'institute_course_id':
+                                //                         chapterId,
+                                //                     'institute_course_breakup_id':
+                                //                         null,
+                                //                     'institute_subject_id':
+                                //                         subjectId,
+                                //                     'institute_chapter_id':
+                                //                         chapterId,
+                                //                     'institute_topic_id':
+                                //                         topicId,
+                                //                     'institute_topic_data_id':
+                                //                         6299,
+                                //                     'last_access_start_time':
+                                //                         '12:28:54',
+                                //                     'last_access_end_time':
+                                //                         null,
+                                //                     'total_access_time': 0,
+                                //                     'no_of_views': null,
+                                //                     'is_updated': 0
+                                //                   };
+                                //
+                                //                   try {
+                                //                     int id = await myDataController
+                                //                         .insert(
+                                //                             'tbl_institute_user_content_access_2023_2024',
+                                //                             data);
+                                //                     print(
+                                //                         "Inserted row id: $id");
+                                //                   } catch (e) {
+                                //                     print(
+                                //                         "Error inserting data: $e");
+                                //                   }
+                                //                 }
+                                //
+                                //                 // final DashboardOpenMenuItemController controller = Get.find();
+                                //                 addToProgress(
+                                //                     courseId: topic.topic
+                                //                         .instituteCourseId,
+                                //                     subjectId: selectedSubject,
+                                //                     chapterId: topic.topic
+                                //                         .instituteChapterId,
+                                //                     topicId: topic.topic
+                                //                         .onlineInstituteTopicId);
+                                //               }
+                                //               Get.toNamed("/videoScreen",
+                                //                   arguments: [
+                                //                     false,
+                                //                     model,
+                                //                     topic
+                                //                   ]);
+                                //             },
+                                //             icon: Icon(
+                                //               Icons.play_circle_fill_outlined,
+                                //               color: ThemeColor.green,size: 12,
+                                //             )),
+                                //         IconButton(
+                                //             onPressed: () {
+                                //               Get.toNamed('/contentPlanning');
+                                //             },
+                                //             icon: Icon(
+                                //               Icons.queue_play_next_outlined,
+                                //               color: ThemeColor.green,size: 12,
+                                //             )),
+                                //       ],
+                                //     ),
+                                //   ],
+                                // ),
                                 // if (topic.completedDate != null)
                                 //   TextView(
                                 //     "${topic.completedDate}",
@@ -236,31 +376,32 @@ class DashboardOpenedSubjectMenuItemWidget extends StatelessWidget {
                                 //     textColor: ThemeColor.darkBlue4392,
                                 //   )
                               ],
-                            )),
+                            ),
                           ]))),
                   TableCell(
                       child: Center(
                     child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: TextView('0/${topic.mediaCount}',fontsize: 13)),
+                        child: TextView('0/${topic.mediaCount}', fontsize: 13)),
                   )),
                   TableCell(
                       child: Center(
                     child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: TextView('0/${topic.eMaterialCount}',fontsize: 13)),
+                        child: TextView('0/${topic.eMaterialCount}',
+                            fontsize: 13)),
                   )),
                   TableCell(
                       child: Center(
                     child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: TextView('0/100',fontsize: 13)),
+                        child: TextView('0/100', fontsize: 13)),
                   )),
                   TableCell(
                       child: Center(
                     child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: TextView('2',fontsize: 13)),
+                        child: TextView('2', fontsize: 13)),
                   )),
                 ],
               );
@@ -275,25 +416,22 @@ class DashboardOpenedSubjectMenuItemWidget extends StatelessWidget {
               AppElevatedButton(
                 title: "Quiz",
                 showBorder: true,
-                onPressed: (){},
+                onPressed: () {},
               ),
               AppElevatedButton(
                 title: "Assignment",
                 showBorder: true,
-                onPressed: (){},
-
+                onPressed: () {},
               ),
               AppElevatedButton(
                 title: "Test",
                 showBorder: true,
-                onPressed: (){},
-
+                onPressed: () {},
               ),
               AppElevatedButton(
                 title: "Feedback",
                 showBorder: true,
-                onPressed: (){},
-
+                onPressed: () {},
               ),
             ],
           ),

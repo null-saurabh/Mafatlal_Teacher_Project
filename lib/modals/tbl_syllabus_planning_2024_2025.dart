@@ -3,12 +3,12 @@ class SyllabusPlanning {
   final double instituteId;
   final double instituteCourseId;
   final double? instituteCourseBreakupId;
-  final double instituteSubjectId;
+  final double? instituteSubjectId;
   final double instituteChapterId;
   final double instituteTopicId;
   final double? instituteTopicDataId;
   final double? questionBankId;
-  final String contentType;
+  final String? contentType;
   final double startYear;
   final double endYear;
   // final DateTime? createdDate;
@@ -19,12 +19,12 @@ class SyllabusPlanning {
     required this.instituteId,
     required this.instituteCourseId,
     this.instituteCourseBreakupId,
-    required this.instituteSubjectId,
+    this.instituteSubjectId,
     required this.instituteChapterId,
     required this.instituteTopicId,
     this.instituteTopicDataId,
     this.questionBankId,
-    required this.contentType,
+    this.contentType,
     required this.startYear,
     required this.endYear,
     // required this.createdDate,

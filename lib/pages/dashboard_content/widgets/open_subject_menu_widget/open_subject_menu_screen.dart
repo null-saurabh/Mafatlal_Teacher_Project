@@ -19,7 +19,9 @@ class DashboardOpenedSubjectMenuScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // print("IN opened subject: ${inProgress[0].chapter.toMap()} ");
-    return Row(
+    return LayoutBuilder(builder: (context, constraints) {
+      if (constraints.maxWidth > 1000)
+      {return Row(
       children: [
         Expanded(
           child: Card(
@@ -66,6 +68,51 @@ class DashboardOpenedSubjectMenuScreen extends StatelessWidget {
           ),
         ),
       ],
-    );
+    );}
+      else {
+        return Column(
+          children: [
+            Card(
+              elevation: 5,
+              child: FlagContainer(
+                  flagTitleColor: ThemeColor.darkBlue4392,
+                  flagTitle: "In Progress",
+                  height: 400,
+                  child: inProgress != null && inProgress!.isNotEmpty
+                      ? DashboardOpenedSubjectMenuItemWidget(model: inProgress!, isToDo: false,selectedSubject: selectedSubject,)
+                      : Center(child: TextView("No data Found!"),)),
+            ),
+            const SizedBox(
+              width: 20,
+            ),
+            Card(
+              elevation: 5,
+              child: FlagContainer(
+                  flagTitleColor: ThemeColor.darkRed0000,
+                  flagTitle: "To Do",
+                  height: 400,
+                  child:  toDo != null && toDo!.isNotEmpty
+                      ? DashboardOpenedSubjectMenuItemWidget(model: toDo!, isToDo: true,selectedSubject: selectedSubject)
+                      : Center(child: TextView("No data Found!"),)),
+
+            ),
+            const SizedBox(
+              width: 20,
+            ),
+            Card(
+              elevation: 5,
+              child: FlagContainer(
+                  flagTitleColor: ThemeColor.darkGreen8326,
+                  flagTitle: "Completed",
+                  height: 400,
+                  child: completed != null && completed!.isNotEmpty
+                      ? DashboardOpenedSubjectMenuItemWidget(model: completed!, isToDo: false,selectedSubject: selectedSubject)
+                      : Center(child: TextView("No data Found!"),)),
+
+            ),
+          ],
+        );
+      }
+    });
   }
 }

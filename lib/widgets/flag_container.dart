@@ -7,9 +7,9 @@ class FlagContainer extends StatelessWidget {
   final String flagTitle;
   final Color flagTitleColor;
   final Color? bgColor;
-  final double height;
+  final double? height;
   const FlagContainer({
-    required this.height,
+    this.height,
     required this.child,
     required this.flagTitle,
     required this.flagTitleColor,

@@ -33,7 +33,9 @@ class DatabaseController extends GetxController {
       throw Exception("Database is not initialized");
     }
   }
-
+  Future<int> delete(String table, {String? where, List<Object?>? whereArgs}) async {
+    return await database!.delete(table, where: where, whereArgs: whereArgs);
+  }
 
 }
 

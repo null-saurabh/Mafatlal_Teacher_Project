@@ -4,6 +4,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:teaching_app/database/datebase_controller.dart';
 import 'package:teaching_app/pages/add_content_planning/content_planning_screen.dart';
 import 'package:teaching_app/pages/dashboard_content/dashboard_screen.dart';
+import 'package:teaching_app/pages/login_screen/login_screen.dart';
 import 'package:teaching_app/pages/video_main_screen/video_main_screen.dart';
 
 void main() async {
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       getPages: [
         GetPage(name: '/', page: () => const DashboardScreen()),
+        GetPage(name: '/loginPage', page: () => const LoginScreen()),
         GetPage(name: '/contentPlanning', page: () => const ContentPlanningScreen()),
         GetPage(name: '/videoScreen', page: () => const VideoMainScreen()),
       ],
