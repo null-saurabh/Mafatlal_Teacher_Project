@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
       initialBinding: BindingsBuilder(() {
         Get.lazyPut<DatabaseController>(() => DatabaseController());
       }),
-      initialRoute: '/',
+      initialRoute: '/loginPage',
       getPages: [
         GetPage(name: '/', page: () => const DashboardScreen()),
         GetPage(name: '/loginPage', page: () => const LoginScreen()),

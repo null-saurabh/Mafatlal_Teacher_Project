@@ -23,7 +23,11 @@ class VideoMainScreenController extends GetxController{
 
 
   RxBool openWhiteBoard = false.obs;
+  RxBool openPlayWithUrl = false.obs;
   WhiteBoardController whiteBoardController =WhiteBoardController();
+  final TextEditingController playByUrlController = TextEditingController();
+  final TextEditingController playByUrlTitleController = TextEditingController();
+
 
 
   var selectedTopic = Rxn<LocalTopic>();
@@ -359,5 +363,70 @@ class VideoMainScreenController extends GetxController{
   void redo(){
     whiteBoardController.redo();
   }
+
+  void clear(){
+    whiteBoardController.clear();
+  }
+
+  void savePlayByUrl({
+    String? displayType = 'Public',
+    String? contentLevel = 'Basic',
+    String? addedType = 'Manual',
+    String? code,
+    String? fileNameExt,
+    String? html5FileName,
+    String? referenceUrl,
+    double? noOfClicks = 0,
+    String? contentTag,
+    String? contentLang = 'English',
+    double? entryByInstituteUserId,
+    String? isVerified = 'No',
+    double? verifiedBy,
+    String? isDeptVerified = 'No',
+    double? deptVerifiedByUserId,
+  }) async {
+    final DatabaseController myDataController = Get.find();
+
+    Map<String, dynamic> data = {
+      'institute_id': 17,
+      'parent_institute_id': 17,
+      'institute_topic_id': selectedTopic.value!.topic.onlineInstituteTopicId,
+      'topic_data_kind': "Other",
+      'topic_data_type': "Embedded",
+
+      'topic_data_file_code_name': playByUrlTitleController.text,
+      'code': playByUrlController.text,
+      'file_name_ext': fileNameExt,
+      'html5_file_name': html5FileName,
+      'reference_url': referenceUrl,
+      'no_of_clicks': noOfClicks,
+
+
+      'display_type': displayType,
+
+      'entry_by_institute_user_id': entryByInstituteUserId,
+
+
+      'content_level': contentLevel,
+      'added_type': addedType,
+
+      'content_tag': contentTag,
+      'content_lang': contentLang,
+      'is_verified': isVerified,
+      'verified_by': verifiedBy,
+      'is_local_content_available': 0,
+      // 'is_dept_verified': isDeptVerified,
+      // 'dept_verified_by_user_id': deptVerifiedByUserId,
+    };
+
+    try {
+      int id = await myDataController.insert('tbl_institute_topic_data', data);
+      print("Inserted row id: $id");
+    } catch (e) {
+      print("Error inserting data: $e");
+    }
+  }
+
+
 
 }

@@ -66,7 +66,7 @@ class EditText extends StatelessWidget {
     this.borderColor = ThemeColor.dividerColor,
     this.focusNode,
     this.textAlign = TextAlign.start,
-    this.suffixSize = 24,
+    this.suffixSize = 32,
     this.prefixSize = 24,
     this.hintFontWeight,
     this.obscureText = false,

@@ -25,9 +25,9 @@ class DatabaseController extends GetxController {
 
   Future<int> insert(String table, Map<String, dynamic> data) async {
     if (database != null) {
-      print("in inserted3");
+      // print("in inserted3");
       return await database!.insert(table, data);
-      print("in inserted3");
+      // print("in inserted3");
 
     } else {
       throw Exception("Database is not initialized");

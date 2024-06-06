@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get/get.dart';
 import 'package:teaching_app/pages/video_main_screen/controller/video_main_screen_controller.dart';
 import 'package:teaching_app/pages/video_main_screen/widgets/chapter_list_widget/chapter_list_widget.dart';
 import 'package:teaching_app/pages/video_main_screen/widgets/dialog_content.dart';
+import 'package:teaching_app/pages/video_main_screen/widgets/play_by_url_widget.dart';
 import 'package:teaching_app/pages/video_main_screen/widgets/video_play_widget/video_play_widget.dart';
 import 'package:teaching_app/widgets/app_scaffold.dart';
+import 'package:teaching_app/widgets/dialog_widget.dart';
+import 'package:teaching_app/widgets/edit_text.dart';
 import 'package:teaching_app/widgets/elevated_card.dart';
 import 'package:whiteboard/whiteboard.dart';
 
@@ -79,13 +83,85 @@ class VideoMainScreen extends StatelessWidget {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.end,
                                         children: [
-                                          Obx(() => ElevatedCard(
-                                                child: VideoPlayWidget(
-                                                  topic:
-                                                      _.currentTopicData.value,
-                                                  // topic: topics[0],
-                                                ),
-                                              )),
+                                          _.openWhiteBoard.value == true
+                                              ? Expanded(
+                                                  child: ElevatedCard(
+                                                      child: Stack(
+                                                    children: [
+                                                      WhiteBoard(
+                                                        strokeColor: _
+                                                            .selectedColor
+                                                            .value,
+                                                        isErasing:
+                                                            _.isErasing.value,
+                                                        controller: _
+                                                            .whiteBoardController,
+                                                      ),
+                                                      Positioned(
+                                                          top: 10,
+                                                          right: 10,
+                                                          child:
+                                                              Column(children: [
+                                                            IconButton(
+                                                              icon: const Icon(
+                                                                  Icons
+                                                                      .color_lens),
+                                                              onPressed: () =>
+                                                                  _selectColor(
+                                                                      context,
+                                                                      _),
+                                                            ),
+                                                            IconButton(
+                                                              icon: const Icon(
+                                                                  Icons.undo),
+                                                              onPressed: () {
+                                                                _.undo();
+                                                              },
+                                                            ),
+                                                            IconButton(
+                                                              icon: const Icon(
+                                                                  Icons.redo),
+                                                              onPressed: () {
+                                                                _.redo();
+                                                              },
+                                                            ),
+                                                            IconButton(
+                                                              icon: const Icon(
+                                                                  Icons.brush),
+                                                              onPressed: () {
+                                                                _.isErasing
+                                                                    .toggle();
+                                                              },
+                                                            ),
+                                                            IconButton(
+                                                              icon: const Icon(
+                                                                  Icons.clear),
+                                                              onPressed: () {
+                                                                _.clear();
+                                                              },
+                                                            ),
+                                                          ])),
+                                                    ],
+                                                  )),
+                                                )
+                                              : _.openPlayWithUrl.value == true
+                                                  ? Expanded(
+                                                      child: ElevatedCard(
+                                                        child:
+                                                            VideoPlayByUrlWidget(
+                                                          url: _
+                                                              .playByUrlController
+                                                              .text,
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : Obx(() => ElevatedCard(
+                                                        child: VideoPlayWidget(
+                                                          topic: _
+                                                              .currentTopicData
+                                                              .value,
+                                                        ),
+                                                      )),
                                           const SizedBox(),
                                           Padding(
                                             padding: const EdgeInsets.all(8.0),
@@ -110,6 +186,10 @@ class VideoMainScreen extends StatelessWidget {
                                                         Colors.grey,
                                                     label: 'Questions',
                                                     onTap: () async {
+                                                      _.openWhiteBoard.value =
+                                                          false;
+                                                      _.openPlayWithUrl.value =
+                                                          false;
                                                       // showDialog(
                                                       // context: context,
                                                       // builder:
@@ -129,6 +209,10 @@ class VideoMainScreen extends StatelessWidget {
                                                         Colors.grey,
                                                     label: 'AI Content',
                                                     onTap: () async {
+                                                      _.openWhiteBoard.value =
+                                                          false;
+                                                      _.openPlayWithUrl.value =
+                                                          false;
                                                       showDialog(
                                                         context: context,
                                                         builder: (BuildContext
@@ -147,8 +231,46 @@ class VideoMainScreen extends StatelessWidget {
                                                         Icons.picture_as_pdf),
                                                     backgroundColor:
                                                         Colors.grey,
+                                                    label: 'Play By Url',
+                                                    onTap: () async {
+                                                      _.openWhiteBoard.value =
+                                                          false;
+                                                      // _.openPlayWithUrl.value = true;
+
+                                                      // var result = await Get.bottomSheet(
+                                                      //   showPlayByUrlDialog(
+                                                      //       context,
+                                                      //       'Play By Url',
+                                                      //       _.ematerialtopics
+                                                      //           .value),
+                                                      //   ignoreSafeArea: false,
+                                                      //   isScrollControlled: true,
+                                                      // );
+
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return showPlayByUrlDialog(
+                                                              context,
+                                                              'Play By Url',
+                                                              _.ematerialtopics
+                                                                  .value);
+                                                        },
+                                                      );
+                                                    },
+                                                  ),
+                                                  SpeedDialChild(
+                                                    child: const Icon(
+                                                        Icons.picture_as_pdf),
+                                                    backgroundColor:
+                                                        Colors.grey,
                                                     label: 'eMaterial',
                                                     onTap: () async {
+                                                      _.openPlayWithUrl.value =
+                                                          false;
+                                                      _.openWhiteBoard.value =
+                                                          false;
                                                       showDialog(
                                                         context: context,
                                                         builder: (BuildContext
@@ -169,6 +291,11 @@ class VideoMainScreen extends StatelessWidget {
                                                         Colors.grey,
                                                     label: 'Video',
                                                     onTap: () async {
+                                                      _.openWhiteBoard.value =
+                                                          false;
+                                                      _.openPlayWithUrl.value =
+                                                          false;
+
                                                       showDialog(
                                                         context: context,
                                                         builder: (BuildContext
@@ -180,6 +307,19 @@ class VideoMainScreen extends StatelessWidget {
                                                                   .value);
                                                         },
                                                       );
+                                                    },
+                                                  ),
+                                                  SpeedDialChild(
+                                                    child: const Icon(Icons
+                                                        .video_collection_outlined),
+                                                    backgroundColor:
+                                                        Colors.grey,
+                                                    label: 'WhiteBoard',
+                                                    onTap: () async {
+                                                      _.openWhiteBoard.value =
+                                                          true;
+                                                      _.openPlayWithUrl.value =
+                                                          false;
                                                     },
                                                   ),
                                                 ],
@@ -233,63 +373,88 @@ class VideoMainScreen extends StatelessWidget {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.end,
                                       children: [
-                                        _.openWhiteBoard.value == false
-                                        ?Obx(() => ElevatedCard(
-                                              child: VideoPlayWidget(
-                                                topic: _.currentTopicData.value,
-                                                // topic: topics[0],
-                                              ),
-                                            )):
-                                         Expanded(child: ElevatedCard(child:
-                                        Stack(
-                                          children: [
-                                            WhiteBoard(
-                                              strokeColor: _.selectedColor.value,
-                                              isErasing: _.isErasing.value,
-                                              controller: _.whiteBoardController,
-                                            ),
-                              Positioned(
-                              top: 10,
-                              right: 10,
-                              child: Column(
-                              children: [
-                              IconButton(
-                              icon: const Icon(Icons.color_lens),
-                              onPressed: () => _selectColor(context, _),
-                              ),
-                              IconButton(
-                              icon: const Icon(Icons.undo),
-                              onPressed: () {
-                              _.undo();
-                              },
-                              ),
-                              IconButton(
-                              icon: const Icon(Icons.redo),
-                              onPressed: () {
-                              _.redo();
-                              },
-                              ),
-                              IconButton(
-                              icon: const Icon(Icons.brush),
-                              onPressed: () {
-                              _.isErasing.value = false;
-                              },
-                              ),
-                              IconButton(
-                              icon: const Icon(Icons.clear),
-                              onPressed: () {
-                              _.isErasing.value = true;
-                              },
-                              ),]
-                                         )
-                                         ),
-                                          ],
+                                        _.openWhiteBoard.value == true
+                                            ? Expanded(
+                                          child: ElevatedCard(
+                                              child: Stack(
+                                                children: [
+                                                  WhiteBoard(
+                                                    strokeColor:
+                                                    _.selectedColor.value,
+                                                    isErasing:
+                                                    _.isErasing.value,
+                                                    controller: _
+                                                        .whiteBoardController,
+                                                  ),
+                                                  Positioned(
+                                                      top: 10,
+                                                      right: 10,
+                                                      child:
+                                                      Column(children: [
+                                                        IconButton(
+                                                          icon: const Icon(
+                                                              Icons
+                                                                  .color_lens),
+                                                          onPressed: () =>
+                                                              _selectColor(
+                                                                  context, _),
+                                                        ),
+                                                        IconButton(
+                                                          icon: const Icon(
+                                                              Icons.undo),
+                                                          onPressed: () {
+                                                            _.undo();
+                                                          },
+                                                        ),
+                                                        IconButton(
+                                                          icon: const Icon(
+                                                              Icons.redo),
+                                                          onPressed: () {
+                                                            _.redo();
+                                                          },
+                                                        ),
+                                                        IconButton(
+                                                          icon: const Icon(
+                                                              Icons.brush),
+                                                          onPressed: () {
+                                                            _.isErasing
+                                                                .toggle();
+                                                          },
+                                                        ),
+                                                        IconButton(
+                                                          icon: const Icon(
+                                                              Icons.clear),
+                                                          onPressed: () {
+                                                            _.clear();
+                                                          },
+                                                        ),
+                                                      ])),
+                                                ],
+                                              )),
                                         )
-                                        ),),
-
+                                            : _.openPlayWithUrl.value == true
+                                        ?Expanded(
+                                          child: ElevatedCard(
+                                            child:
+                                            VideoPlayByUrlWidget(
+                                              url: _
+                                                  .playByUrlController
+                                                  .text,
+                                            ),
+                                          ),
+                                        )
+                                            :Obx(() => Expanded(
+                                              child: ElevatedCard(
+                                                                                        child: VideoPlayWidget(
+                                              topic: _
+                                                  .currentTopicData.value,
+                                              // topic: topics[0],
+                                                                                        ),
+                                                                                      ),
+                                            )),
                                         const SizedBox(),
                                         Padding(
-                                          padding: const EdgeInsets.all(8.0),
+                                          padding: const  EdgeInsets.all(8.0),
                                           child: SizedBox(
                                             height: 40,
                                             width: 40,
@@ -309,6 +474,11 @@ class VideoMainScreen extends StatelessWidget {
                                                   backgroundColor: Colors.grey,
                                                   label: 'Questions',
                                                   onTap: () async {
+                                                    _.openWhiteBoard.value =
+                                                        false;
+                                                    _.openPlayWithUrl.value =
+                                                        false;
+
                                                     // showDialog(
                                                     //   context: context,
                                                     //   builder:
@@ -327,6 +497,11 @@ class VideoMainScreen extends StatelessWidget {
                                                   backgroundColor: Colors.grey,
                                                   label: 'AI Content',
                                                   onTap: () async {
+                                                    _.openWhiteBoard.value =
+                                                        false;
+                                                    _.openPlayWithUrl.value =
+                                                        false;
+
                                                     showDialog(
                                                       context: context,
                                                       builder: (BuildContext
@@ -344,8 +519,47 @@ class VideoMainScreen extends StatelessWidget {
                                                   child: const Icon(
                                                       Icons.picture_as_pdf),
                                                   backgroundColor: Colors.grey,
+                                                  label: 'Play By Url',
+                                                  onTap: () async {
+                                                    _.openWhiteBoard.value =
+                                                        false;
+
+                                                    // var result = await Get.bottomSheet(
+                                                    //   showPlayByUrlDialog(
+                                                    //       context,
+                                                    //       'Play By Url',
+                                                    //       _.ematerialtopics
+                                                    //           .value),
+                                                    //   ignoreSafeArea: false,
+                                                    //   isScrollControlled: true,
+                                                    // );
+
+
+                                                    // _.openPlayWithUrl.value = true;
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return showPlayByUrlDialog(
+                                                            context,
+                                                            'Play By Url',
+                                                            _.ematerialtopics
+                                                                .value);
+                                                      },
+                                                    );
+                                                  },
+                                                ),
+                                                SpeedDialChild(
+                                                  child: const Icon(
+                                                      Icons.picture_as_pdf),
+                                                  backgroundColor: Colors.grey,
                                                   label: 'eMaterial',
                                                   onTap: () async {
+                                                    _.openWhiteBoard.value =
+                                                        false;
+                                                    _.openPlayWithUrl.value =
+                                                        false;
+
                                                     showDialog(
                                                       context: context,
                                                       builder: (BuildContext
@@ -365,6 +579,11 @@ class VideoMainScreen extends StatelessWidget {
                                                   backgroundColor: Colors.grey,
                                                   label: 'Video',
                                                   onTap: () async {
+                                                    _.openWhiteBoard.value =
+                                                        false;
+                                                    _.openPlayWithUrl.value =
+                                                        false;
+
                                                     showDialog(
                                                       context: context,
                                                       builder: (BuildContext
@@ -384,7 +603,9 @@ class VideoMainScreen extends StatelessWidget {
                                                   backgroundColor: Colors.grey,
                                                   label: 'WhiteBoard',
                                                   onTap: () async {
-                                                   _.openWhiteBoard.toggle();
+                                                    _.openWhiteBoard.toggle();
+                                                    _.openPlayWithUrl.value =
+                                                        false;
                                                   },
                                                 ),
                                               ],
@@ -463,7 +684,123 @@ class VideoMainScreen extends StatelessWidget {
     );
   }
 
+  Widget showPlayByUrlDialog(BuildContext context, String flagTitle,
+      List<InstituteTopicData> dataList) {
+    VideoMainScreenController controller =
+        Get.find<VideoMainScreenController>();
 
+    final formKey = GlobalKey<FormState>();
+
+    return
+      // DialogWidget(
+    //     dialogTitle: "Play by Url", child: SingleChildScrollView(
+    //   child: SizedBox(
+    //     width: MediaQuery.of(context).size.width * 0.60,
+    //     // height: MediaQuery.of(context).size.height * 0.45,
+    //     child: Form(
+    //       key: formKey,
+    //       child: Column(
+    //           crossAxisAlignment: CrossAxisAlignment.start,
+    //           mainAxisSize: MainAxisSize.min,
+    //           children: [
+    //             EditText(
+    //               hint: "Paste the link here",
+    //               labelText: "Link",
+    //               controller: controller.playByUrlController,
+    //               onValidate: (value) {
+    //                 if (value!.isEmpty) {
+    //                   return "Please fill this field";
+    //                 }
+    //                 return null;
+    //               },
+    //             ),
+    //             EditText(
+    //               hint: "Enter the title",
+    //               labelText: "Title",
+    //               controller: controller.playByUrlTitleController,
+    //               onValidate: (value) {
+    //                 if (value!.isEmpty) {
+    //                   return "Please fill this field";
+    //                 }
+    //                 return null;
+    //               },
+    //             ),
+    //             Row(
+    //               mainAxisAlignment: MainAxisAlignment.end,
+    //               children: [
+    //                 IconButton(
+    //                     onPressed: () {
+    //                       if (formKey.currentState!.validate()) {
+    //                         controller.openPlayWithUrl.value = true;
+    //                         controller.openWhiteBoard.value = false;
+    //                         controller.savePlayByUrl();
+    //                         Get.back();
+    //                       }
+    //                     },
+    //                     icon: const Icon(Icons.search)),
+    //               ],
+    //             )
+    //           ]),
+    //     ),
+    //   ),
+    // ),);
+
+
+      AlertDialog(
+      backgroundColor: Colors.white,
+      // shape: RoundedRectangleBorder(
+      //   borderRadius: BorderRadius.circular(
+      //       10), // Adjust this value to decrease/increase rounded corners
+      // ),
+      content:SingleChildScrollView(
+        child: Form(
+          key: formKey,
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                EditText(
+                  hint: "Paste the link here",
+                  labelText: "Link",
+                  controller: controller.playByUrlController,
+                  onValidate: (value) {
+                    if (value!.isEmpty) {
+                      return "Please fill this field";
+                    }
+                    return null;
+                  },
+                ),
+                EditText(
+                  hint: "Enter the title",
+                  labelText: "Title",
+                  controller: controller.playByUrlTitleController,
+                  onValidate: (value) {
+                    if (value!.isEmpty) {
+                      return "Please fill this field";
+                    }
+                    return null;
+                  },
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                        onPressed: () {
+                          if (formKey.currentState!.validate()) {
+                            controller.openPlayWithUrl.value = true;
+                            controller.openWhiteBoard.value = false;
+                            controller.savePlayByUrl();
+                            Get.back();
+                          }
+                        },
+                        icon: const Icon(Icons.search)),
+                  ],
+                )
+              ]),
+        ),
+      )
+    );
+  }
 
   void _selectColor(BuildContext context, _) {
     showDialog(
@@ -491,6 +828,4 @@ class VideoMainScreen extends StatelessWidget {
       },
     );
   }
-
-
 }
